@@ -1,0 +1,11 @@
+﻿build/
+.dart_tool/
+.gradle/
+ios/Pods/
+ios/.symlinks/
+.pub-cache/
+.pub/
+node_modules/
+*.log
+.DS_Store
+.env
