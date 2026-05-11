@@ -282,6 +282,48 @@ class CommunityRepository {
     return FlashSummaryModel.fromJson(response.data as Map<String, dynamic>);
   }
 
+  /// Description IA d'une image de post (best-effort).
+  ///
+  /// - Télécharge l'image depuis son URL publique
+  /// - L'envoie au backend vision (`/m3ak/sign/explain`)
+  /// - Retourne `null` si service indisponible ou format non pris en charge
+  Future<String?> describePostImage(String imageUrl) async {
+    try {
+      final imageRes = await _api.dio.get<List<int>>(
+        imageUrl,
+        options: Options(responseType: ResponseType.bytes),
+      );
+      final raw = imageRes.data;
+      if (raw == null || raw.isEmpty) return null;
+
+      final formData = FormData.fromMap({
+        'file': MultipartFile.fromBytes(
+          raw,
+          filename: 'post-image.jpg',
+        ),
+      });
+
+      final response = await _api.dio.post<Map<String, dynamic>>(
+        Endpoints.m3akSignExplain,
+        data: formData,
+      );
+
+      final data = response.data ?? const <String, dynamic>{};
+      final explanation = (data['explanation'] as String?)?.trim();
+      if (explanation != null && explanation.isNotEmpty) return explanation;
+
+      final detectedWord = (data['detected_word'] as String?)?.trim();
+      if (detectedWord != null && detectedWord.isNotEmpty) {
+        return 'Signe détecté: $detectedWord.';
+      }
+      return null;
+    } on DioException {
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
   // ========== HELP REQUESTS ==========
 
   /// Crée une nouvelle demande d'aide (champs inclusifs optionnels, alignés backend).

@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/theme/app_theme.dart';
+import 'core/volume/ios_accessibility_shortcut_overlay.dart';
 import 'l10n/app_localizations.dart';
 import 'providers/theme_provider.dart';
 import 'router/app_router.dart';
@@ -22,7 +23,16 @@ class Ma3akApp extends ConsumerWidget {
       darkTheme: AppTheme.dark,
       themeMode: themeMode,
       routerConfig: router,
-      builder: (context, child) => child ?? const SizedBox.shrink(),
+      builder: (context, child) {
+        final body = child ?? const SizedBox.shrink();
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            body,
+            const IosAccessibilityShortcutOverlay(),
+          ],
+        );
+      },
       // ── Localisation : français, anglais, arabe ────────────────────────────
       localizationsDelegates: const [
         AppLocalizations.delegate,

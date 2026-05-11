@@ -155,6 +155,7 @@ class Endpoints {
       '/ai/community/summarize-comments';
   static const String aiCommunityPostToHelpRequest =
       '/ai/community/post-to-help-request';
+  static const String m3akSignExplain = '/m3ak/sign/explain';
 
   static const String communityHelpRequests = '/community/help-requests';
   static String communityHelpRequestAccept(String id) =>

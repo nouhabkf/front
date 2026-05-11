@@ -2983,8 +2983,17 @@ class _CommunityAiEntryScreenState extends ConsumerState<CommunityAiEntryScreen>
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
-    return Scaffold(
+    return WillPopScope(
+      onWillPop: () async {
+        context.go('/home');
+        return false;
+      },
+      child: Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.go('/home'),
+        ),
         title: Text(
           // Aligné maquette : titre blanc sur dégradé (corps sous la barre).
           AppStrings.fromPreferredLanguage(
@@ -3244,6 +3253,7 @@ class _CommunityAiEntryScreenState extends ConsumerState<CommunityAiEntryScreen>
           },
           ),
         ),
+      ),
       ),
     );
   }

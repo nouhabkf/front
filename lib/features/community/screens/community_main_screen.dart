@@ -10,9 +10,14 @@ import 'help_requests_screen.dart';
 
 /// Hub Communauté : publications, lieux accessibles (`/lieux`), demandes d'aide.
 class CommunityMainScreen extends ConsumerStatefulWidget {
-  const CommunityMainScreen({super.key, this.initialTabIndex = 0});
+  const CommunityMainScreen({
+    super.key,
+    this.initialTabIndex = 0,
+    this.openAiOnStart = true,
+  });
 
   final int initialTabIndex;
+  final bool openAiOnStart;
 
   @override
   ConsumerState<CommunityMainScreen> createState() =>
@@ -22,12 +27,23 @@ class CommunityMainScreen extends ConsumerStatefulWidget {
 class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  bool _didAutoOpenAi = false;
 
   @override
   void initState() {
     super.initState();
     final i = widget.initialTabIndex.clamp(0, 2);
     _tabController = TabController(length: 3, vsync: this, initialIndex: i);
+    _maybeOpenAiOnStart();
+  }
+
+  void _maybeOpenAiOnStart() {
+    if (!widget.openAiOnStart || _didAutoOpenAi) return;
+    _didAutoOpenAi = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.push('/community-ai-entry');
+    });
   }
 
   @override
